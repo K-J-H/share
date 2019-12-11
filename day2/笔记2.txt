@@ -1,0 +1,204 @@
+1.安装编辑工具Notepad Plus_7.3.3.0，默认安装就行，只是编辑功能
+2.虚拟机的安装，安装过的没必要安装了（安装完成之后需要输入许可密钥）
+3.打开镜像，解压Ubuntu标准教学系统，通过虚拟机直接打开
+     镜像存在三种状态，一个是关闭、一个是运行、挂起
+	 建议以后关闭虚拟机使用挂起状态
+	 因为Ubuntu标准教学系统的镜像是处于挂起状态的
+	 所以需要先把镜像关闭一次，重新打开
+	 注意：当询问你是否已经复制该镜像是，选择我已复制，其他问题一律选择否或X
+	 你的电脑把虚拟处理关了（需要进入电脑的BIOS模式，把虚拟处理设为enable）好像是联想才默认这样
+	 进入需要密码的用户，不同的用户权限不同，密码是123456
+	 注意：如果使用小键盘输入，需要先打开小键盘
+4.串口软件安装，默认安装
+    需要安装许可密钥，在说明.txt中
+5.安装转串口驱动
+     PL2303
+--------------------------------------------------
+编辑程序   ---------->   编译程序     -------->      开发板
+windows     共享目录       Ubuntu     下载命令
+共享目录的创建：
+     实现的是Ubuntu和Windows的共享，共享一个目录，对一个目录两者都有操作权限
+	 先准备一个目录，以备使用
+	 1.点击虚拟机上方的虚拟机按钮，弹出框中选择设置
+	 2.选择选项，选择共享文件夹
+	 3.首先选择总是启用，然后添加主键的共享文件夹
+	 4.访问共享目录
+	   Ubuntu里的访问路径： /mnnt/hgfs/
+	 
+--------------------------------------------------
+linux命令
+ls
+    ls xxx(目标文件的路径)
+	ls
+	默认查看当前目录下的文件
+	ls -a
+	查看当前目录下的所有文件（包括隐藏文件）
+	ls -l
+	查看当前目录下的文件，并且可以查看文件的属性
+	-rwxrwxrwx 1 root root 0 Dec  3 00:48 1.txt
+    -rwxrwxrwx:
+	   分为4部分查看：1+3+3+3
+	   第1部分：文件的类型
+	   - 普通文件
+	   d 目录文件
+	   p 管道文件
+	   ...
+	   第2部分：当前用户的权限
+	   第3部分：组成员的权限
+	   第4部分：其他组成员的权限
+
+chmod：
+     修改文件权限
+	 格式：
+	     chmod 777 xxx（目标文件满权限）
+	
+	
+pwd
+   查看当前目录的绝对路径
+vi/vim
+    这是Ubuntu内置的编辑工具
+	命令模式和输入模式
+	刚进入vi打开的文件，是处于命令模式
+	需要切换到输入模式，才能进行编写
+	编辑完毕，需要切换到命令模式进行保存，然后退出
+	切换到输入模式：按键i  切换到命令模式：按键ESC
+	：wq   保存并退出
+	：q!   强制性退出
+	
+cd
+cd -  返回，先后两个目录的跳转
+
+mkdir
+     创建目录文件
+	 格式：
+	     mkdir xxx(目录名)
+rm
+    删除文件
+	格式：
+	   rm xxx（普通文件)
+	   rm xxx(目录文件） -rf
+touch(创建）
+     创建普通文件（一些存储数据的文件）
+	 格式：
+	     touch xxx(文件名)
+mkfifo(创建)
+     创建管道文件
+	 格式：
+	     mkfifo xxx(文件名)
+cat
+    查看目标文件的内容，会把目标文件的内容罗列到终端
+	格式:
+	    cat xxx(目标文件)
+which（查找目标命令的位置）  which xxx（目标命令）
+     如果目标命令存在，则打印出目标命令所在的绝对路径（Linux的存储方式是一个挂载的模式，它的子目录的大小可以比父目录大
+man   既是命令又是手册，查看目标命令或者函数的相关信息
+      1.man man
+	   1   Executable programs or shell commands(命令手册)
+       2   System calls (functions provided by the kernel)(系统函数手册)
+       3   Library calls (functions within program libraries)(库函数手册)
+      2.man -f xxx(查找的目标)
+	      例子：
+		  man -f mkdir
+		  mkdir (1)            - make directories
+          mkdir (2)            - create a directory
+		    说明mkdir既是一个命令又是一个函数
+	 3.man x(手册编号）xxx(查找的目标）
+	
+家目录==》不是指home目录，而是home里面的一个用户的目录，home里面可以说有很多个用户  ~可以指/home/gec
+
+table可以自动补齐目录	
+
+open函数：
+       int open(const char *pathname, int flags);
+	   打开目标文件，并进行权限选择
+       int open(const char *pathname, int flags, mode_t mode);
+       若目标文件不存在，可以创建并打开文件
+       int creat(const char *pathname, mode_t mode); ==》在规则中出现_t的，一般可以理解为数字
+	   创建目标文件
+	   参数：
+	       pathname：目标文件的路径
+		   flags：文件权限的选择，利用的是宏定义，读写权限的选择，必须三选其一
+		    O_RDONLY   只读
+			O_WRONLY   只写
+			O_RDWR     可读可写
+			其他选择 O_CREAT
+		需要用位运算中的或运算
+		返回值：
+		RETURN VALUE
+       open() and creat() return the new file descriptor, or -1  if  an  error
+       occurred (in which case, errno is set appropriately).
+       成功时，返回文件描述符，范围是0~1023（在一些其他函数有用）
+	   失败时，返回-1
+	   
+	   文件描述符
+	   0       标准输入
+	   1       标准输出
+	   2       标准出错
+	   
+close函数:
+       #include <unistd.h>
+
+       int close(int fd);
+       参数：
+	   fd：目标文件的文件描述符
+	   返回值：
+	   成功，返回0
+	   失败，返回-1
+	   
+	   
+读取函数：read：
+       #include <unistd.h>
+
+       ssize_t read(int fd, void *buf, size_t count);
+	   参数：
+	       fd：目标文件的文件描述符
+		   buf：想要读取的数据的地址
+		   count：想要读取的数据的多少，单位字节
+		返回值：
+		成功时，返回实际读取到的字节数，范围是0~文件大小
+		失败时，返回-1
+	   
+写入函数：write：
+       #include <unistd.h>
+
+       ssize_t write(int fd, const void *buf, size_t count);
+       参数：
+	   fd：目标文件的文件描述符
+	   buf：想要读取的数据的地址
+	   count：想要读取的数据的多少，单位字节
+	   返回值：
+	   成功时，返回实际读取到的字节数，范围是count
+	   失败时，返回-1
+	   
+lseek函数：
+       #include <sys/types.h>
+       #include <unistd.h>
+
+       off_t lseek(int fd, off_t offset, int whence);
+       参数：
+	   fd：目标文件的文件描述符
+	   offset：相对于参考位置的偏移距离，单位字节
+	           可以为正数，为0，为负数（都是相对于参考位置
+	   whence：参考位置的选择，利用的是宏定义进行选择
+	           SEEK_SET     文件开头
+			   SEEK_CUR     当前位置
+			   SEEK_END     文件结尾
+       返回值：
+	   成功时，返回值表示光标重新定位后距文件头的距离，单位为字节
+	   失败时，返回-1
+	   
+gcc和arm-linux-gcc
+    本地编译命令和交叉编译命令
+	格式：
+	    命令 xxx（目标源文件)
+		默认生成可执行文件a.out
+		
+		命令 xxx（目标源文件） -o xxx（指定生成文件）
+		-o   重定向
+		
+练习：
+     把文件1.txt里的数据，完整的复制到文件2.txt中，保证不重不漏
+
+文件IO:
+    
+

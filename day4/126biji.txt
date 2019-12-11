@@ -1,0 +1,61 @@
+图片显示效果：
+	1.像素点的显示顺序的排布和对应的像素点颜色的安排
+	2.在适当的位置添加适当长度的延时
+
+---------------------------------------
+触摸屏：		输入设备
+	触摸屏的设备文件：
+		/dev/input/event0
+	
+	测试触摸屏的设备文件：
+		cat /dev/input/event0
+
+	坐标范围：
+		左到右是0~800
+		上到下是0~480
+	
+输入子系统：
+	管理输入设备的子系统
+	触摸屏，键盘，鼠标，摄像头，手柄，麦克风。。。
+	
+	输入子系统的头文件:
+		/usr/include/linux/input.h
+	
+记录输入事件	
+struct input_event {
+	struct timeval time;		事件发生时间
+	__u16 type;					事件类型
+	__u16 code;					事件的主值
+								事件类型的进一步区分
+	__s32 value;				事件的辅值
+								事件真正的值
+};
+	
+type：
+#define EV_SYN			0x00		事件应答，初始化
+#define EV_KEY			0x01		按键或按钮事件
+#define EV_REL			0x02		相对位移事件
+#define EV_ABS			0x03		绝对位移事件
+	
+code：
+#define ABS_X			0x00		X轴的坐标
+#define ABS_Y			0x01		Y轴的坐标
+	
+#define ABS_PRESSURE		0x18	压力值
+
+#define BTN_TOUCH		0x14a		压力值
+压力值仅仅只表示当前有无触摸产生，不能用来测量压力
+
+
+练习：
+	1.封装触摸屏的函数
+	2.电子相册
+		要求：	1.能通过触摸进行相册的浏览
+				2.实现循环浏览
+		
+		可能用到的相关函数：
+			1.sprintf函数		字符串拼接函数
+			2.scandir函数		目录筛选函数
+
+
+	

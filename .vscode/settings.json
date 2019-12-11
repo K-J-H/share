@@ -1,0 +1,9 @@
+{
+    "files.associations": {
+        "stdio.h": "c",
+        "function.h": "c",
+        "lcd.h": "c",
+        "math.h": "c",
+        "bitmap.h": "c"
+    }
+}
