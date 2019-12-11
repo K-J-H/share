@@ -88,9 +88,9 @@ int draw_bmp_symmetry(char *path_bmp, int mode){
 }
 
 /**
- * 以x0, y0向上旋转rotation（弧度）
+ * 以x0, y0为旋转中心向上旋转jiaodu
 */
-int draw_bmp_rotation(char* path_bmp, int jiaodu){
+int draw_bmp_rotation(char* path_bmp, int x0, int y0, int jiaodu){
     int fd_bmp = open_bitmap(path_bmp);
     if(fd_bmp == -1){
         printf("open fd_bmp:%s fail.\n",path_bmp);
@@ -119,8 +119,8 @@ int draw_bmp_rotation(char* path_bmp, int jiaodu){
     int Xnew, Ynew;
     for(i = 0; i < length; i++){
         for(j = 0; j < high; j++){
-            Xnew = i*cos_hudu - j*sin_hudu;
-            Ynew = j*cos_hudu + i*sin_hudu;
+            Xnew = (i-x0)*cos_hudu - (j-y0)*sin_hudu + x0;
+            Ynew = (j-y0)*cos_hudu + (i-x0)*sin_hudu + y0;
             if(Xnew>0 && Xnew < PIXELS_COLUMN && Ynew > 0 && Ynew < PIXELS_ROW){
                 draw_point(Xnew, Ynew, buff[i+j*length]);
             }
