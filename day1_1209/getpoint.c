@@ -18,7 +18,6 @@
  * 2.文件处理（又可细分）
  * 3.关闭
 */
-
 int fd_ts;
 
 int open_tsfile();
@@ -44,6 +43,7 @@ int open_tsfile(){
 }
 
 int get_xy(int *x, int *y){
+
     struct input_event ts;
 
     while(1)

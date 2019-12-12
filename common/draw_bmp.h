@@ -59,6 +59,9 @@ int draw_bmp_offset(char* path_bmp,int off_x, int off_y){
     close_lcd();
 }
 
+/**
+ * 这个对称好像没啥用，不写了，艹
+*/
 int draw_bmp_symmetry(char *path_bmp, int mode){
     int fd_bmp = open_bitmap(path_bmp);
     if(fd_bmp == -1){
@@ -88,7 +91,7 @@ int draw_bmp_symmetry(char *path_bmp, int mode){
 }
 
 /**
- * 以x0, y0为旋转中心向上旋转jiaodu
+ * 以x0, y0为旋转中心向下旋转jiaodu
 */
 int draw_bmp_rotation(char* path_bmp, int x0, int y0, int jiaodu){
     int fd_bmp = open_bitmap(path_bmp);

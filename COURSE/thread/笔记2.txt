@@ -1,0 +1,125 @@
+线程的简单使用：
+	多任务所需
+
+线程和进程的区别：
+	进程是系统分配资源的单位
+	线程是系统调度的单位
+	
+       #include <pthread.h>
+			创建线程，创建之后自动执行
+       int pthread_create(pthread_t *thread, const pthread_attr_t *attr,
+                          void *(*start_routine) (void *), void *arg);
+
+       Compile and link with -pthread.
+		
+			参数：
+				thread：线程的ID的地址
+						需要定义一个对应类型的线程ID
+				attr：表示线程的分离属性，是否进行线程分离
+						一般填NULL，表示不分离
+				start_routine：线程的回调函数，用来指定线程任务的函数
+				arg：用来给创建的线程任务函数进行传参的
+						注意数据类型
+						
+			返回值：
+				成功时，返回0
+				失败时，返回错误数字
+		
+       #include <pthread.h>
+			线程函数的，返回值返回函数
+       void pthread_exit(void *retval);
+			也属于线程的内部停止函数
+       Compile and link with -pthread.	
+
+		参数：
+			retval：需要返回的数据
+					注意数据类型
+					也可以直接返回NULL，表示只是停止该线程函数
+					
+		返回值：
+			空
+
+注意：pthread_exit和pthread_join需要配套使用		
+			
+       #include <pthread.h>
+			等待线程的返回值
+       int pthread_join(pthread_t thread, void **retval);
+			注意：此函数是一个阻塞函数
+       Compile and link with -pthread.			
+	   
+			参数：
+				thread：要等待的线程的ID
+				retval：要接收的数据
+						可以填NULL
+			
+			返回值：
+				成功时，返回值0
+				失败时，返回错误数字
+
+       #include <pthread.h>
+			线程的外部停止函数
+       int pthread_cancel(pthread_t thread);
+
+       Compile and link with -pthread.
+				
+			参数：
+				thread：目标线程的ID
+			
+			返回值：
+				成功时，返回0
+				失败时，返回错误数字
+				
+-----------------------------------------
+1.使用线程需要链接线程库，才能正确使用，编译才能成功
+2.lcd_draw_jpg函数有两种数据来源
+	参数3表示数据来源为jpg图片
+	参数4、5表示数据来源为jpg数据流
+3.头文件的双引号和尖括号的区别：
+	双引号从当前目录开始查找头文件
+	尖括号从系统默认的环境变量开始查找头文件
+4.当你的头文件和库文件既不在系统默认的环境下，也不再当前目录下时
+	需要指定使用的头文件和库文件所在的路径
+	
+	指定方式：
+		在编译的时候，在编译命令中进行指定
+		-I ./xxx(指定的头文件目录)
+		-L ./xxx(指定的库文件目录)
+		-lxxx(指定的库的名字)
+		
+		例子：
+			arm-linux-gcc lcd.c -o lcd -I ./libjpeg -L ./libjpeg -ljpeg
+
+5.库的名字
+	libjpeg.so.8.0.2
+	lib+库的名字+.so/.a+版本
+	
+	.so		动态库，在程序执行时需要进行加载，编译出来的可执行文件表较小
+	.a		静态库，在程序编译时需要进行加载，编译出来的可执行无需其他依赖
+
+	注意：在开发版上执行程序时，注意所需动态库是否已经添加完毕
+			若没有，则需要把动态库下载到/lib/并赋予权限
+
+6.多个C文件需要同时编译
+	arm-linux-gcc main.c lcd.c -o lcd -I ./libjpeg -L ./libjpeg -ljpeg
+	
+7.摄像头的设备文件：
+	/dev/video7
+	注意：因为有些开发板先开机在插入摄像头和先插入摄像头再开机
+			导致的是摄像头的设备文件不一样
+		  所以注意顺序
+
+8.摄像头的启动和关闭
+	利用线程启动
+	利用标志量flag_cam进行关闭
+
+9.保存一张jpg图片
+	只需要把jpg的颜色数据写入jpg文件即可
+	
+10.怎样保存多张图片
+	打开文件名不一样的图片进行图片数据保存
+	最好是有规律性的命名
+
+11.怎样记录程序内的一个值
+	需要的是外部存储
+	每一次程序启动时，读取该数值
+	每一次程序正常退出时，把新的该值写入文件进行保存

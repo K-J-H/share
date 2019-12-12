@@ -45,6 +45,12 @@ int specific_color(int color){
     return 0;
 }
 
+/**
+ * 为了多次写入照片，所以封装了打开文件
+*/
+
+
+
 int main(int argc, char* argv[]){
     int color;
 

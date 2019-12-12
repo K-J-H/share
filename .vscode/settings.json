@@ -4,6 +4,7 @@
         "function.h": "c",
         "lcd.h": "c",
         "math.h": "c",
-        "bitmap.h": "c"
+        "bitmap.h": "c",
+        "dirent.h": "c"
     }
 }

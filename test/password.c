@@ -70,7 +70,7 @@ int verifyPwd(int pwdLength, char *pwd);
 int main()
 {
     //显示密码界面
-    draw_bmp_offset("/kjh/PHOTO/PICTURES/password.bmp", 0, 0);
+    draw_bmp_offset("/kjh/RESOURCES/password.bmp", 0, 0);
 
     char pwd[8];
     int pwdLength = 0;
@@ -144,19 +144,21 @@ int main()
             if (y > BACKSPACE_LOW_Y && y < BACKSPACE_HIGH_Y)
             {
                 printf("backspace\n");
-                draw_bmp_offset("/kjh/RESOURCES/white.bmp", 345*pwdLength,40);
+                draw_bmp_offset("/kjh/RESOURCES/white.bmp", 20+65*(pwdLength),185);
                 pwdLength--;
             }
             if (y > ENTER_LOW_Y && y < ENTER_HIGH_Y)
             {
                 printf("enter\n");
                 while(1){
-                    draw_bmp_offset("/kjh/RESOURCES/white.bmp", 345*pwdLength, 40);
+                    draw_bmp_offset("/kjh/RESOURCES/white.bmp", 20+65*(pwdLength),185);
+                    printf("%d\n",pwdLength);
                     if(--pwdLength == 0){
                         break;
                     }
                 }
                 verifyReturn = verifyPwd(pwdLength, pwd);
+                printf("%d\n",verifyReturn);
                 pwdLength = 0;//一次enter结束，pwdLength归零
             }
         }
@@ -166,7 +168,7 @@ int main()
 
 void setPassword(char *pwd)
 {
-    int pfile = open("/kjh/PHOTO/password.txt", O_RDWR, O_CREAT);
+    int pfile = open("/kjh/RESOURCES/password.txt", O_RDWR, O_CREAT);
 
     close(pfile);
 }
@@ -178,8 +180,8 @@ void getInputPwd(int *pwdLength, char *pwd, char num)
         return;
     }
     pwd[*pwdLength] = num;
-    *pwdLength++;
-    draw_bmp_offset("/kjh/RESOURCES/xing.bmp",345*(*pwdLength),40);
+    (*pwdLength)++;
+    draw_bmp_offset("/kjh/RESOURCES/xing.bmp",20+65*(*pwdLength),185);
 }
 
 int verifyPwd(int pwdLength, char *pwd)
@@ -190,7 +192,7 @@ int verifyPwd(int pwdLength, char *pwd)
     int pwdFromFileLength = 0; //读取出来的密码位数,包括换行符
     int readLength = 0;
     //读取密码文件
-    int pwdFile = open("/kjh/PHOTO/password.txt", O_RDONLY);
+    int pwdFile = open("/kjh/RESOURCES/password.txt", O_RDONLY);
     if (pwdFile == -1)
     {
         close(pwdFile);
@@ -201,7 +203,7 @@ int verifyPwd(int pwdLength, char *pwd)
         //读取密码文件中的密码。换行符分隔密码。
         do
         {
-            readLength = read(pwdFile, pwdFromFile[pwdFromFileLength], 1);
+            readLength = read(pwdFile, pwdFromFile+pwdFromFileLength, 1);
             if (readLength == 0||readLength == -1)//0，到文件末尾
             {
                 result = 0;

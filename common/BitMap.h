@@ -49,7 +49,7 @@ int read_bmpinfo(int fd_bmp, Info_bmp* info_bmp){
  * 应该要有动态存储空间的。。。但现在还不是很清楚。
  * 在外部定义变量buff[length][width].那么存储空间是怎样的？
  * fd_bmp:要读取的bmp文件标致fd
- * buff：像素信息存放的地方
+ * buff：像素信息存放的地方,二维数组不可用...
  * length：high：长和宽
 */
 int read_bmp(int fd_bmp, int *buff,int length, int high){
@@ -91,3 +91,4 @@ int read_bmp(int fd_bmp, int *buff,int length, int high){
 int close_bitmap(int fd_bmp){
     close(fd_bmp);
 }
+

@@ -1,0 +1,261 @@
+函数封装（对于参数而言）：
+	1.传值
+		把实参所保存的值，传进函数进行运算
+		运算结果不会影响实参本身
+		因为传值相当于把实参的拷贝份参与运算，与实参本身无关
+	2.传地址
+		把实参的地址，传进函数进行运算
+		运算结果会影响实参本身
+		因为传地址相当于实参本身参加运算
+
+	例子：
+		int swap(int *m,int *n)
+		{
+			int temp;
+			temp = *m;
+			*m = *n;
+			*n = temp;
+		}
+		
+		int main()
+		{
+			int a=5,b=9;
+			int *p=&a,*q=&b;
+			
+			swap(&a,&b);		//传地址
+			swap(p,q);			//传值
+		}
+
+-----------------------------------------
+函数使用：
+	1.sprintf函数
+       #include <stdio.h>
+	   
+       int sprintf(char *str, const char *format, ...);
+			字符串拼接函数
+		
+			参数：
+				str：数据的输出地址
+				format：数据的输出格式
+				...：数据格式的对应位置
+			
+			返回值：
+				成功时，返回0
+				失败时，返回-1
+	
+	2.scandir函数
+       #include <dirent.h>
+			目录筛选函数
+       int scandir(const char *dirp, struct dirent ***namelist,
+              int (*filter)(const struct dirent *),
+              int (*compar)(const struct dirent **, const struct dirent **));
+
+       int alphasort(const void *a, const void *b);
+
+       int versionsort(const void *a, const void *b);
+
+			参数：
+				dirp：目标目录的路径
+				namelist：筛选的符合要求的文件的名字的存放位置
+				filter：目录的筛选函数
+						需要自定义
+				compar：文件名排序，升序或降序
+			
+			返回值：
+				成功时，返回满足要求的文件的个数
+				失败时，返回-1
+
+----------------------------------------
+系统调用函数：system函数
+       #include <stdlib.h>
+
+       int system(const char *command);
+			使程序内调用的命令字符，同样具有命令的效力
+		
+		参数：
+			command：命令的字符串
+					命令在命令行怎么用，字符串就怎么写
+					
+		返回值：
+			成功时，返回0
+			失败时，返回-1
+			
+------------------------------------------
+如何切换音视频的上一首，下一首：
+	前提：一个播放器同时只能播放一首
+	先关闭当前正在播放的，然后播放新的
+
+------------------------------------------
+把mplayer和将要播放的视频文件下载到开发板内
+	把mplayer下载到/bin/，使mplayer能被全局访问
+	把视频文件下载到自己的工作目录
+------------------------------------------
+一、如何播放视频
+
+  1）播放器    ---> mplayer(linux)
+  2）视频文件  ---> mp4  avi
+	
+	视频播放器：mplayer
+	音频播放器：madplay
+	语音：alsa
+	游戏模拟器：gba
+	
+二、分析LCD架构
+
+  分辨率： 800 * 480  --->  宽：高 = 5:3
+  像素：透明度、红色、绿色、蓝色
+
+三、视频格式
+  
+  mp4  --->  不能随意更改宽高比，导致不能在板子中正常播放。
+
+  帧宽度：1280    
+  帧高度：720     宽高比-->16：9  不能修改为板子的比例，需转换avi格式
+
+  avi  --->  根据意愿来修改帧宽度与帧高度的比例
+
+	1）打开格式工厂，转换视频格式为avi
+
+	2）输出配置中要设置以下参数
+
+	   屏幕大小： 800x480
+	   宽高比： 5:3
+
+	   ---> 文件较大  --->不能使用串口下载，要使用网口下载。
+
+四、如何在板子播放avi格式视频？
+
+  任务：下载mplayer与**.avi视频到板子中
+
+ chmod 777 mplayer
+ mplayer -slave -quiet -geometry 0:0 -zoom -x 800 -y 480 Faded3.avi
+
+  
+ mplayer:执行播放器
+
+ -slave:从模式，不再截取键盘控制,而是使用slave命令来控制视频播放
+ -quiet：不再输出多余的信息
+
+ -geometry 0:0：指定播放视频的起始位置
+
+ -zoom：允许视频缩放
+
+ -x 800 -y 480：帧高度，帧宽度
+
+ Faded3.avi：播放的文件名
+
+五、什么是管道？
+
+ Linux下，一切都是文件   ---> 文件IO  -->  open/read/write/close
+
+ -：普通文件    --->  touch
+ d：目录文件    --->  mkdir
+ l：软连接文件  --->  ln
+ 
+ p: 管道(fifo)文件  ---> 通过一个函数接口得到  --->  mkfifo
+
+
+  思路：
+
+  0. 判断文件是否存在，若不存在，则创建  ---  access  ---  man 3 access
+
+   #include <unistd.h>
+
+  int access(const char *path, int amode);
+
+   path:文件所在的路径
+   amode:  F_OK  是否存在
+
+  返回值：
+  成功：0
+  失败：-1
+
+  1. 创建管道文件  mkfifo  --->  man 3 mkfifo
+
+  #include <sys/types.h>
+  #include <sys/stat.h>
+
+  int mkfifo(const char *pathname, mode_t mode);
+
+  参数：
+  pathname：文件的路径
+  mode：八进制的权限    0777
+
+  返回值：
+  成功：0
+  失败：-1
+     
+  2. 打开管道文件   ---> open  ---> man 2 open
+
+  练习：在板子中的 /tmp/ 创建一个命名管道名字为 fifo,并打开它。
+  
+    /tmp/fifo
+
+    /tmp：一般是用于存放临时文件
+
+
+===============================================
+
+六、mplayer命令行参数中添加参数来说明管道的路径
+
+  mplayer -slave -quiet -geometry 0:0 -zoom -x 800 -y 480 Faded3.avi
+
+ 添加指定管道文件参数
+
+  mplayer -slave -quiet -input file=/tmp/fifo -geometry 0:0 -zoom -x 800 -y 480 Faded3.avi &
+
+  &:不是C语言中的取地址符号，而是Linux命令在后台播放，前台资源没有被占用。这样就可以实现一边播放视频，另一边就可以处理别的事情（触摸屏）。
+
+七、slave命令有哪些？
+
+  查看slave命令参数列表：  
+
+     mplayer -input cmdlist
+
+ 快进/快退
+ seek                 Float [Integer]    
+
+ 退出播放器
+ quit                 [Integer]
+
+ 暂停/取消暂停
+ pause
+
+ 音量修改
+ volume               Float [Integer]
+
+ 静音
+ mute                 [Integer]
+
+ mute 1  -->静音
+ mute 0  -->恢复声音
+
+  slave命令都是以 \n为结束标志
+
+  slave命令与参数之间必须有一个空格隔开。
+  
+	
+	write(fd,"seek +5\n",strlen("seek +5\n"));
+	快进5秒
+	write(fd,"seek -5\n",strlen("seek +5\n"));
+	快退5秒
+	write(fd,"volume +5\n",strlen("volume +5\n"));
+	加声音
+	write(fd,"volume -5\n",strlen("volume -5\n"));
+	减声音	
+	
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+				

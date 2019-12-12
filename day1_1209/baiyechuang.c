@@ -112,9 +112,10 @@ int draw_bmp(char *path, int offset_x, int offset_y, int haomiao)
     //         usleep(haomiao);
     //     }
     // }
-    
+
 	close(fd_lcd);
 }
+
 
 int main(int argc, char* argv[]){
     	if(argc > 5 ){
