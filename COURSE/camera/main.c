@@ -43,14 +43,15 @@ int main()
 {
 	lcd_open("/dev/fb0");
 	
-	pthread_t pid;
-	//开启摄像头
-	pthread_create(&pid,NULL,func,NULL);
+	// pthread_t pid;
+	// //开启摄像头
+	// pthread_create(&pid,NULL,func,NULL);
 	
-	//关闭摄像头
-	//获取触摸屏的坐标点，直接设置flag_cam = 0;
-	scanf("%d",&flag_cam);
-	sleep(2);
+	// //关闭摄像头
+	// //获取触摸屏的坐标点，直接设置flag_cam = 0;
+	// scanf("%d",&flag_cam);
+	// sleep(2);
+	lcd_draw_jpg(0,0,"/kjh/CAMERA/PICTURES/20361226091756.jpg" ,NULL,0,0);
 	
 	close_lcd();
 	
