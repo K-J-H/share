@@ -144,8 +144,10 @@ int main()
             if (y > BACKSPACE_LOW_Y && y < BACKSPACE_HIGH_Y)
             {
                 printf("backspace\n");
-                draw_bmp_offset("/kjh/RESOURCES/white.bmp", 20+65*(pwdLength),185);
-                pwdLength--;
+                if(pwdLength != 0){
+                    draw_bmp_offset("/kjh/RESOURCES/white.bmp", 20+65*(pwdLength),185);
+                    pwdLength--;
+                }
             }
             if (y > ENTER_LOW_Y && y < ENTER_HIGH_Y)
             {
@@ -158,6 +160,7 @@ int main()
                     }
                 }
                 verifyReturn = verifyPwd(pwdLength, pwd);
+                printf("verify result:");
                 printf("%d\n",verifyReturn);
                 pwdLength = 0;//一次enter结束，pwdLength归零
             }
