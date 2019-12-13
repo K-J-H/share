@@ -61,17 +61,23 @@
 #define ENTER_LOW_Y 410
 #define ENTER_HIGH_X 800
 #define ENTER_HIGH_Y 480
+
+#define SET_PWD_LOW_X 620
+#define SET_PWD_LOW_Y 0
+#define SET_PWD_HIGH_X 800
+#define SET_PWD_HIGH_Y 80
 //---------------------------------------------------------------------
 //TODO:setPassword
 //---------------------------------------------------------------------
 int getInput(int pwdLength, char *pwd);
 void getInputPwd(int *pwdLength, char *pwd, char num);
 int verifyPwd(int pwdLength, char *pwd);
+void setPassword(int pwdLength, char *pwd);
 int main()
 {
     //显示密码界面
     draw_bmp_offset("/kjh/RESOURCES/password.bmp", 0, 0);
-
+    draw_bmp_offset("/kjh/RESOURCES/lock.bmp", 345, 40);
     char pwd[8];
     int pwdLength = 0;
     int x, y;              //获取点击坐标
@@ -156,6 +162,21 @@ int main()
                 verifyReturn = verifyPwd(pwdLength, pwd);
                 printf("verify result:");
                 printf("%d\n", verifyReturn);
+                if (verifyReturn == 0)
+                {
+                    draw_bmp_offset("kjh/RESOURCES/pwd_wrong.bmp", 20, 130);
+                }
+                if (verifyReturn == 1)
+                {
+                    draw_bmp_offset("kjh/RESOURCES/unlock.bmp", 345, 12);
+                    //draw_bmp_offset("kjh/RESOURCES/white.bmp", 0, 100);
+                    //draw_bmp_offset("kjh/RESOURCES/white.bmp", 50, 100);
+                    sleep(1);
+                    system("test_photo");
+                    close_tsfile();
+                    return 0;
+                }
+                //pwdLength归零
                 if (pwdLength != 0)
                 {
                     while (1)
@@ -171,14 +192,39 @@ int main()
                 printf("%d\n", pwdLength);
             }
         }
+        if (x > SET_PWD_LOW_X && x < SET_PWD_HIGH_X && y > SET_PWD_LOW_Y && y < SET_PWD_HIGH_Y)
+        {
+            printf("set password");
+            setPassword(pwdLength, pwd);
+            if (pwdLength != 0)
+            {
+                while (1)
+                {
+                    draw_bmp_offset("/kjh/RESOURCES/white.bmp", 20 + 65 * (pwdLength - 1), 185);
+                    if (--pwdLength == 0)
+                    {
+                        break;
+                    }
+                }
+            }
+        }
     }
     close_tsfile();
+    return 0;
 }
 
-void setPassword(char *pwd)
+void setPassword(int pwdLength, char *pwd)
 {
+    if (pwdLength == 0)
+    {
+        return;
+    }
     int pfile = open("/kjh/RESOURCES/password.txt", O_RDWR, O_CREAT);
-
+    lseek(pfile, 0 ,SEEK_END);
+    write(pfile, pwd, pwdLength);
+    lseek(pfile, 0 ,SEEK_END);
+    char *gan = "|";
+    write(pfile, gan, 1);
     close(pfile);
 }
 
