@@ -1,4 +1,10 @@
+#ifndef FUNCTION_H
+#define FUNCTION_H
+
+
 #include<stdio.h>
+#include <time.h>
+#include <string.h>
 
 /**
  * 字符串转换数值：
@@ -79,3 +85,39 @@ int charToint(char* format){
     }
     return sign*sum;
 }
+
+/**
+ * 获取当前时间，存放到数组中
+*/
+int getTimeNow(char *nowTime)
+{
+	char acYear[5] = {0};
+	char acMonth[5] = {0};
+	char acDay[5] = {0};
+	char acHour[5] = {0};
+	char acMin[5] = {0};
+	char acSec[5] = {0};
+
+	time_t now;
+    struct tm* timenow;
+    
+    time(&now);
+    timenow = localtime(&now);
+
+    strftime(acYear,sizeof(acYear),"%Y",timenow);
+    strftime(acMonth,sizeof(acMonth),"%m",timenow);
+    strftime(acDay,sizeof(acDay),"%d",timenow);
+    strftime(acHour,sizeof(acHour),"%H",timenow);
+    strftime(acMin,sizeof(acMin),"%M",timenow);
+    strftime(acSec,sizeof(acSec),"%S",timenow);
+
+	strncat(nowTime, acYear, 4);
+	strncat(nowTime, acMonth, 2);
+	strncat(nowTime, acDay, 2);
+	strncat(nowTime, acHour, 2);
+	strncat(nowTime, acMin, 2);
+	strncat(nowTime, acSec, 2);
+
+	return 0;
+}
+#endif

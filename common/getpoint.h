@@ -1,3 +1,6 @@
+#ifndef GET_POINT_H
+#define GET_POINT_H
+
 #include <stdio.h>		//printf
 #include <sys/types.h>	//文件IO
 #include <sys/stat.h>
@@ -78,3 +81,5 @@ int get_xy(int *x, int *y){
 int close_tsfile(){
     close(fd_ts);
 }
+
+#endif

@@ -1,3 +1,8 @@
+
+
+#ifndef DRAW_BMP_H
+#define DRAW_BMP_H
+
 /**
  * 写了读取bmp文件信息，于写入lcd后，现在结合两者功能：
  * 在lcd上显示bmp文件。那么可以怎么写入呢？
@@ -145,7 +150,7 @@ int draw_color(int color){
     return 0;
 }
 
-
+#endif
 
 
 

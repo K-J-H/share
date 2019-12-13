@@ -5,6 +5,7 @@
         "lcd.h": "c",
         "math.h": "c",
         "bitmap.h": "c",
-        "dirent.h": "c"
+        "dirent.h": "c",
+        "getpoint.h": "c"
     }
 }

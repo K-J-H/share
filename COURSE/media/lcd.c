@@ -80,7 +80,7 @@ int lcd_open(const char *str)
 }
 
 //LCD关闭
-void close_lcd(void)
+void close_lcd_(void)
 {
 	
 	/* 取消内存映射 */

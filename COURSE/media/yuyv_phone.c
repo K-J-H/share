@@ -9,6 +9,7 @@
 #include <malloc.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <fcntl.h>
 #include <sys/time.h>
 #include <sys/mman.h>
 #include <sys/ioctl.h>
@@ -18,6 +19,9 @@
 #include <strings.h>
 
 
+#include "../../common/Function.h"
+
+
 #define OUTPUT_BUF_SIZE  4096
 #define CLEAR(x) memset (&(x), 0, sizeof (x))
 #define WIDTH 640//320
@@ -25,6 +29,7 @@
 
 int flag;
 extern int flag_cam;
+extern flag_save_photo;//拍摄标志位
 
 struct buffer {
 	void   *start;
@@ -123,7 +128,7 @@ int compress_yuyv_to_jpeg(unsigned char *buf, unsigned char *buffer, int size, i
 
 	line_buffer = calloc (WIDTH * 3, 1);
 	yuyv = buf;//将YUYV格式的图片数据赋给YUYV指针
-	printf("compress start...\n");
+	//printf("compress start...\n");
 
 	cinfo.err = jpeg_std_error (&jerr);
 	jpeg_create_compress (&cinfo);
@@ -193,7 +198,7 @@ int compress_yuyv_to_jpeg(unsigned char *buf, unsigned char *buffer, int size, i
 
  
 //读取一帧的内容
-static int read_frame (void)
+static int read_frame ()
 {
 	struct v4l2_buffer buf;
 	int ret;
@@ -211,7 +216,7 @@ static int read_frame (void)
 	unsigned char dest[buf.length+1];
 
 	assert (buf.index < n_buffers);
-	printf ("buf.index dq is %d,\n",buf.index);
+	//printf ("buf.index dq is %d,\n",buf.index);
 
 	memcpy(src, buffers[buf.index].start, buf.length);
 	ret = compress_yuyv_to_jpeg(src, dest,(WIDTH * HEIGHT), 80);//YUV数据转换成jpeg格式
@@ -220,12 +225,29 @@ static int read_frame (void)
 	
 	//============需要修改的地方==============
 	//显示jpeg图片
-	lcd_draw_jpg(160,0,NULL,dest,ret,0);
+	lcd_draw_jpg(0,0,NULL,dest,ret,0);
 	//0,0 分别表示图片在lcd屏幕的起始x坐标和起始y坐标
 	//NULL表示使用test-mmap.jpeg文件
 	//dest==jpeg图片数据，ret==图片字节数
 	//0表示是否需要缩放
-	
+	if(flag_save_photo){
+		printf("read_frame: save photo...\n");
+		char buff_jpegname[64] = {0};
+		getTimeNow(buff_jpegname);
+		strcat(buff_jpegname,".jpg");
+		char path_jpeg[128] = {0};
+		sprintf(path_jpeg,"/kjh/CAMERA/PICTURES/%s",buff_jpegname);
+		printf("%s\n",path_jpeg);
+		int fd_save_jpeg = open(path_jpeg,O_RDWR|O_CREAT,S_IRWXU);
+		if(fd_save_jpeg == -1){
+			printf("open fail.\n");
+			flag_save_photo = 0;
+			return -1;
+		}
+		write(fd_save_jpeg,dest,ret);
+		printf("save %s in %s\n",buff_jpegname,path_jpeg);
+		flag_save_photo = 0;
+	}
 	//打开一张"xxx.jpg"的图片，
 	//如果不存在，则创建一张名叫"xxx.jpg"的图片，
 	
@@ -379,7 +401,7 @@ int get_picture()
 
 		if (read_frame ())//如果可读，执行read_frame函数，把采集到的每一帧图像显示到开发板上
 		{
-			printf("OK\n");
+			//printf("OK\n");
 		}
 		/*
 		//表示摄像采集数据的次数

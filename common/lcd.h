@@ -1,3 +1,6 @@
+#ifndef LCD_H
+#define LCD_H
+
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -41,5 +44,5 @@ int draw_point(int x, int y, int color){
 int color_at_point(int x, int y){
     return *(mmap_lcd+y*PIXELS_COLUMN+x);
 }
-
+#endif
 

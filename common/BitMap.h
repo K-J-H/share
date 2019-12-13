@@ -1,3 +1,6 @@
+
+#ifndef BIT_MAP_H
+#define BIT_MAP_H
 /**
  * 该头文件封装以下常用功能：
  * 1. 打开bitmap
@@ -92,3 +95,4 @@ int close_bitmap(int fd_bmp){
     close(fd_bmp);
 }
 
+#endif
