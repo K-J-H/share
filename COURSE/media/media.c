@@ -37,7 +37,8 @@ extern int camera();
 int main(){
     // draw_bmp(path);//背景
     int x, y;//获取点击坐标
-    open_tsfile();
+    open_tsfile_();
+    open_lcd();
     while(1){
     draw_bmp_offset("/kjh/PHOTO/PICTURES_SYSTEM/home.bmp",0, 0);
     get_xy(&x, &y);
@@ -58,6 +59,7 @@ int main(){
     }
     }
     close_tsfile();
+    close_lcd();
 
 }
 

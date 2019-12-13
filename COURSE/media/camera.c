@@ -57,7 +57,7 @@ int filter(const struct dirent *file_info){
     return 0;
 }
 int camera_photos(){
-	    struct dirent **namelist;
+	struct dirent **namelist;
     int n;
     n = scandir("/kjh/CAMERA/PICTURES/", &namelist, filter, alphasort);
     if (n < 0)
@@ -95,11 +95,11 @@ int camera_photos(){
 int camera()
 {
 	int getpoint_x, getpoint_y;
-	open_tsfile();
+
 	
 	draw_bmp_offset("/kjh/CAMERA/RESOURCES/camera_toolbar.bmp",640,0);
 
-	lcd_open("/dev/fb0");
+
 	pthread_t pid;
 	//开启摄像头
 	pthread_create(&pid,NULL,func,NULL);
@@ -124,12 +124,12 @@ int camera()
 	scanf("%d",&flag_cam);
 	sleep(2);
 	
-	close_lcd_();
-	close_tsfile();
+
+
 	return 0;
 }
 
 
-int main(){
-	camera();
-}
+// int main(){
+// 	camera();
+// }

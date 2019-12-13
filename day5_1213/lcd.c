@@ -132,7 +132,7 @@ int read_bmpinfo(int fd_bmp, Info_bmp* info_bmp){
 	read(fd_bmp,information,sizeof(information));
 	info_bmp->length = information[18] | information[19] << 8 | information[20] << 16 | information[21] << 24;
 	info_bmp->high = information[22] | information[23] << 8 | information[24] << 16 | information[25] << 24;
-	printf("length:%d\thigh:%d\t\n",info_bmp->length,info_bmp->high);
+	//printf("length:%d\thigh:%d\t\n",info_bmp->length,info_bmp->high);
 }
 
 /**
@@ -145,7 +145,7 @@ int read_bmpinfo(int fd_bmp, Info_bmp* info_bmp){
 */
 int read_bmp(int fd_bmp, int *buff,int length, int high){
     int m = (length*3) % 4;//查看是否能被4整除
-    printf("yushu: %d\n",m);
+    //printf("yushu: %d\n",m);
     if(m == 0){//能被四整除，则直接转换成int
         char buff_unprocess[length*high*3];
         //lseek(fd_bmp,54,SEEK_SET);
@@ -208,7 +208,6 @@ int lcd_draw_bmp(char* path_bmp,int off_x, int off_y){
     //以上把bmp图片信息读入buff中
 
     //接下来是将buff写入lcd屏幕中
-
     int i,j;
     // printf("off_x:%d\toff_y%d\t\n",off_x,off_y);
     for(i= (off_x<0)? -off_x:0; i<length && (off_x+i)<PIXELS_COLUMN; i++){
@@ -222,6 +221,7 @@ int lcd_draw_bmp(char* path_bmp,int off_x, int off_y){
     close_bitmap(fd_bmp);
 
 }
+
 
 //显示jpeg图片的代码
 //显示的起始位置的X轴坐标

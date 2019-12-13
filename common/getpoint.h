@@ -35,7 +35,7 @@ int close_tsfile();
 //   close_tsfile();
 // }
 
-int open_tsfile(){
+int open_tsfile_(){
     fd_ts = open("/dev/input/event0",O_RDWR);
 	if(-1 == fd_ts)
 	{   
