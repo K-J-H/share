@@ -1,6 +1,3 @@
-#include "../common/draw_bmp.h"
-#include "../common/getpoint.h"
-#include <stdio.h>
 
 #define NUM_1_LOW_X 0
 #define NUM_1_LOW_Y 250
@@ -67,15 +64,31 @@
 #define SET_PWD_HIGH_X 800
 #define SET_PWD_HIGH_Y 80
 
+#define EXIT_PWD_LOW_X 0
+#define EXIT_PWD_LOW_Y 0
+#define EXIT_PWD_HIGH_X 65
+#define EXIT_PWD_HIGH_Y 65
+
 int getInput(int pwdLength, char *pwd);
 void getInputPwd(int *pwdLength, char *pwd, char num);
 int verifyPwd(int pwdLength, char *pwd);
 void setPassword(int pwdLength, char *pwd);
-int main()
+/**
+ * 1.进入密码界面
+ * 2.获取输入
+ * 3.回车后，校验密码
+ * 4.输入密码后，可以设置密码将密码保存到密码文件
+ * 
+ * 返回值
+ * 0：退出
+ * 1：密码正确进入程序
+*/
+int password()
 {
     //显示密码界面
     draw_bmp_offset("/kjh/RESOURCES/password.bmp", 0, 0);
     draw_bmp_offset("/kjh/RESOURCES/lock.bmp", 345, 40);
+    draw_bmp_offset("/kjh/RESOURCES/exit.bmp", 0, 0);
     char pwd[8];
     int pwdLength = 0;
     int x, y;              //获取点击坐标
@@ -170,9 +183,8 @@ int main()
                     draw_bmp_offset("/kjh/RESOURCES/white.bmp", 0, 100);
                     draw_bmp_offset("/kjh/RESOURCES/white.bmp", 50, 100);
                     sleep(1);
-                    system("test_photo");
                     close_tsfile();
-                    return 0;
+                    return 1;
                 }
                 //pwdLength归零
                 if (pwdLength != 0)
@@ -206,6 +218,11 @@ int main()
                 }
             }
         }
+        if (x > EXIT_PWD_LOW_X && x < EXIT_PWD_HIGH_X && y > EXIT_PWD_LOW_Y && y < EXIT_PWD_HIGH_Y)
+        {
+            close_tsfile();
+            return 0;
+        }
     }
     close_tsfile();
     return 0;
@@ -218,9 +235,9 @@ void setPassword(int pwdLength, char *pwd)
         return;
     }
     int pfile = open("/kjh/RESOURCES/password.txt", O_RDWR, O_CREAT);
-    lseek(pfile, 0 ,SEEK_END);
+    lseek(pfile, 0, SEEK_END);
     write(pfile, pwd, pwdLength);
-    lseek(pfile, 0 ,SEEK_END);
+    lseek(pfile, 0, SEEK_END);
     char *gan = "|";
     write(pfile, gan, 1);
     close(pfile);
